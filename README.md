@@ -1,1 +1,1 @@
-# operator-code
+Необходимо запустить run.ps1
