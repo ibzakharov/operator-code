@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using OperatorCode.Api.Dtos;
 using OperatorCode.Api.Models;
 using OperatorCode.Api.Repositories;
@@ -12,41 +10,49 @@ namespace OperatorCode.Api.Controllers;
 public class OperatorController : ControllerBase
 {
     private readonly IOperatorRepository _operatorRepository;
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
 
-    public OperatorController(IOperatorRepository operatorRepository,
-        ApplicationDbContext context, 
-        IMapper mapper)
+    public OperatorController(IOperatorRepository operatorRepository)
     {
         _operatorRepository = operatorRepository;
-        _context = context;
-        _mapper = mapper;
     }
-    
+
     [HttpPost]
-    public async Task<ActionResult<OperatorDto>> Post(CreateOperatorDto createOperatorDto)
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<Operator>> Post([FromBody] ModifyOperatorDto modifyOperatorDto)
     {
-        if (await _operatorRepository.ExistsName(createOperatorDto.Name))
+        if (await _operatorRepository.ExistsName(modifyOperatorDto.Name))
         {
-            return Conflict(new { message = "An operator with the same name already exists." });
+            ModelState.AddModelError("Name", "Name already exists");
+            return Conflict(new ValidationProblemDetails(ModelState));
         }
-        var operatorDto = await _operatorRepository.Create(createOperatorDto);
-        return CreatedAtAction("GetByCode", new { code = operatorDto.Code }, operatorDto);
+        
+        var operatorDto = await _operatorRepository.Create(modifyOperatorDto);
+        return CreatedAtAction(nameof(GetByCode), new { code = operatorDto.Code }, operatorDto);
     }
-    
+
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<OperatorDto>>> Get()
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IEnumerable<Operator>>> Get()
     {
         var operators = await _operatorRepository.GetAll();
-        return operators.ToList();
+
+        if (!operators.Any())
+        {
+            return NoContent();
+        }
+
+        return Ok(operators);
     }
-    
+
     [HttpGet("{code}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<OperatorDto>> GetByCode(int code)
     {
         var operatorDto = await _operatorRepository.GetByCode(code);
-        
+
         if (operatorDto == null)
         {
             return NotFound();
@@ -56,13 +62,11 @@ public class OperatorController : ControllerBase
     }
 
     [HttpPut("{code}")]
-    public async Task<IActionResult> Put(int code, [FromBody] string name)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> Put(int code, ModifyOperatorDto modifyOperatorDto)
     {
-        if (await _operatorRepository.ExistsName(name))
-        {
-            return Conflict(new { message = "An operator with the same name already exists." });
-        }
-        
         var operatorDto = await _operatorRepository.GetByCode(code);
 
         if (operatorDto == null)
@@ -70,11 +74,19 @@ public class OperatorController : ControllerBase
             return NotFound();
         }
 
-        await _operatorRepository.Update(code, name);
+        if (await _operatorRepository.ExistsName(modifyOperatorDto.Name))
+        {
+            ModelState.AddModelError("Name", "Name already exists");
+            return Conflict(new ValidationProblemDetails(ModelState));
+        }
+        
+        await _operatorRepository.Update(code, modifyOperatorDto.Name);
         return NoContent();
     }
-    
+
     [HttpDelete("{code}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete(int code)
     {
         var operatorDto = await _operatorRepository.GetByCode(code);

@@ -15,14 +15,13 @@ public class OperatorRepository : IOperatorRepository
         _context = context;
         _mapper = mapper;
     }
-    
-    public async Task<OperatorDto> Create(CreateOperatorDto createOperatorDto)
+
+    public async Task<OperatorDto> Create(ModifyOperatorDto modifyOperatorDto)
     {
-        var entity = _mapper.Map<Operator>(createOperatorDto);
+        var entity = _mapper.Map<Operator>(modifyOperatorDto);
         _context.Operators.Add(entity);
         await _context.SaveChangesAsync();
-        var resultDto = _mapper.Map<OperatorDto>(entity);
-        return resultDto;
+        return _mapper.Map<OperatorDto>(entity);
     }
 
     public async Task<IEnumerable<OperatorDto>> GetAll()
@@ -47,9 +46,13 @@ public class OperatorRepository : IOperatorRepository
         var entity = await _context.Operators.FindAsync(code);
         if (entity == null)
             return;
-        entity.Name = name;
-        _context.Operators.Update(entity);
-        await _context.SaveChangesAsync();
+
+        if (entity.Name != name)
+        {
+            entity.Name = name;
+            _context.Operators.Update(entity);
+            await _context.SaveChangesAsync();
+        }
     }
 
     public async Task Delete(int code)

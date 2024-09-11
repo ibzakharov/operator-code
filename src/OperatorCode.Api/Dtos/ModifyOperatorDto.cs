@@ -2,8 +2,7 @@
 
 namespace OperatorCode.Api.Dtos;
 
-public class CreateOperatorDto
+public class ModifyOperatorDto
 {
-    [JsonPropertyName("name")]
     public string Name { get; set; }
 }

@@ -8,7 +8,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<Operator, CreateOperatorDto>()
+        CreateMap<Operator, ModifyOperatorDto>()
             .ReverseMap();      
         CreateMap<Operator, OperatorDto>()
             .ReverseMap();
