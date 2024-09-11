@@ -9,12 +9,11 @@ namespace OperatorCode.Web.Controllers;
 public class HomeController : Controller
 {
     private readonly OperatorHttpClient _operatorHttpClient;
-    private readonly HttpClient _httpClient;
 
     public HomeController(OperatorHttpClient operatorHttpClient, IHttpClientFactory httpClientFactory)
     {
         _operatorHttpClient = operatorHttpClient;
-        _httpClient = httpClientFactory.CreateClient();
+        httpClientFactory.CreateClient();
     }
 
     public async Task<ActionResult<IEnumerable<Operator>>> Index()

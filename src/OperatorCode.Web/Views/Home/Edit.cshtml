@@ -2,13 +2,15 @@
 
 <h2>Edit operator</h2>
 
-<form asp-action="Edit" method="post">
+<form asp-action="Edit" method="post" class="form-horizontal">
     @Html.HiddenFor(model => model.Code)
-    <div>
-        <label for="Name">Name</label>
-        <input type="text" id="Name" asp-for="Name" />
-        <span asp-validation-for="Name"></span>
-    </div>
-    <button type="submit">Save</button>
+    <p class="form-group">
+        <label for="Name" class="col-form-label">Name</label>
+        <input type="text" id="Name" asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </p>
+    <p>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary">Back</a>
+    </p>
 </form>
-

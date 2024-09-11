@@ -32,17 +32,10 @@ public class OperatorController : ControllerBase
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<IEnumerable<Operator>>> Get()
     {
         var operators = await _operatorRepository.GetAll();
-
-        if (!operators.Any())
-        {
-            return NoContent();
-        }
-
         return Ok(operators);
     }
 

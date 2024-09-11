@@ -7,25 +7,35 @@
 <h2>List of operators</h2>
 <a href="@Url.Action("Create", "Home")">Create a new operator</a>
 
-<table>
+<table class="table table-bordered">
     <thead>
     <tr>
-        <th>Код</th>
-        <th>Имя</th>
-        <th>Действия</th>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var op in Model)
+    @if (Model.Any())
+    {
+        @foreach (var op in Model)
+        {
+            <tr>
+                <td>@op.Code</td>
+                <td>@op.Name</td>
+                <td>
+                    <a class="btn btn-primary btn-sm" href="@Url.Action("Edit", "Home", new { code = op.Code })">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="@Url.Action("Delete", "Home", new { code = op.Code })">Delete</a>
+                </td>
+            </tr>
+        }
+    }
+    else
     {
         <tr>
-            <td>@op.Code</td>
-            <td>@op.Name</td>
-            <td>
-                <a href="@Url.Action("Edit", "Home", new { code = op.Code })">Edit</a>
-                <a href="@Url.Action("Delete", "Home", new { code = op.Code })">Delete</a>
-            </td>
+            <td colspan="3" class="text-center">No operators found.</td>
         </tr>
     }
     </tbody>
+
 </table>

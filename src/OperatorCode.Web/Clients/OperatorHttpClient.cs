@@ -7,18 +7,18 @@ namespace OperatorCode.Web.Clients;
 
 public class OperatorHttpClient
 {
-    private readonly HttpClient _client;
+    private readonly HttpClient _httpClient;
 
-    public OperatorHttpClient(HttpClient client, IConfiguration configuration)
+    public OperatorHttpClient(HttpClient httpClient, IConfiguration configuration)
     {
-        _client = client;
-        _client.BaseAddress = new Uri(configuration.GetValue<string?>("ApiServiceUrl"));
+        _httpClient = httpClient;
+        _httpClient.BaseAddress = new Uri(configuration.GetValue<string?>("ApiServiceUrl"));
     }
 
     public async Task<ResponseData<IEnumerable<Operator>>> GetAllAsync()
     {
         var result = new ResponseData<IEnumerable<Operator>>();
-        var response = await _client.GetAsync("/operators");
+        var response = await _httpClient.GetAsync("/operators");
         result.Success = response.IsSuccessStatusCode;
 
         if (result.Success)
@@ -39,7 +39,7 @@ public class OperatorHttpClient
         var result = new Response();
 
         var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-        var response = await _client.PostAsync("/operators", content);
+        var response = await _httpClient.PostAsync("/operators", content);
         result.Success = response.IsSuccessStatusCode;
 
         if (!result.Success)
@@ -54,7 +54,7 @@ public class OperatorHttpClient
     public async Task<ResponseData<Operator>> Update(int code)
     {
         var result = new ResponseData<Operator>();
-        var response = await _client.GetAsync($"/operators/{code}");
+        var response = await _httpClient.GetAsync($"/operators/{code}");
         result.Success = response.IsSuccessStatusCode;
 
         if (result.Success)
@@ -74,7 +74,7 @@ public class OperatorHttpClient
     {
         var result = new ResponseData<Operator>();
         var content = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-        var response = await _client.PutAsync($"/operators/{model.Code}", content);
+        var response = await _httpClient.PutAsync($"/operators/{model.Code}", content);
         result.Success = response.IsSuccessStatusCode;
 
         if (!result.Success)
@@ -87,9 +87,9 @@ public class OperatorHttpClient
 
     public async Task Delete(int code)
     {
-        await _client.DeleteAsync($"/operators/{code}");
+        await _httpClient.DeleteAsync($"/operators/{code}");
     }
-    
+
     private async Task<Dictionary<string, string>> HandleErrors(HttpResponseMessage response)
     {
         var result = new Dictionary<string, string>();
