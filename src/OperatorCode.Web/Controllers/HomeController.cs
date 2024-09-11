@@ -18,16 +18,16 @@ public class HomeController : Controller
 
     public async Task<ActionResult<IEnumerable<Operator>>> Index()
     {
-        var operators = await _operatorHttpClient.GetAllAsync();
-        if (!operators.Success)
+        var response = await _operatorHttpClient.GetAllAsync();
+        if (!response.Success)
         {
-            foreach (var error in operators.Errors)
+            foreach (var error in response.Errors)
             {
                 ModelState.AddModelError(error.Key, error.Value);
             }
         }
 
-        return View(operators.Data);
+        return View(response.Data);
     }
 
     public IActionResult Create()

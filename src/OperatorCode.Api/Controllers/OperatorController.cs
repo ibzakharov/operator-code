@@ -67,6 +67,11 @@ public class OperatorController : ControllerBase
             return NotFound();
         }
 
+        if (modifyOperatorDto.Name == operatorDto.Name)
+        {
+            return NoContent();
+        }
+            
         if (await _operatorRepository.ExistsName(modifyOperatorDto.Name))
         {
             ModelState.AddModelError("Name", "Name already exists");

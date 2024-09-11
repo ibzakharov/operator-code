@@ -29,11 +29,11 @@ services:
       context: ./src
       dockerfile: OperatorCode.Web/Dockerfile
     ports:
-      - 5001:8081
+      - 5005:8081
     depends_on:
       - webapi  
     environment:
-      - ASPNETCORE_HTTP_PORTS=8081
+      - ASPNETCORE_URLS=http://0.0.0.0:8081
 volumes:
   postgres_data:
     driver: local

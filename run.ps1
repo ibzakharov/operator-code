@@ -1,2 +1,2 @@
 docker-compose up -d --build
-Start-Process "http://localhost:5000/"
+Start-Process "http://localhost:5005/"

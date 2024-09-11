@@ -46,13 +46,10 @@ public class OperatorRepository : IOperatorRepository
         var entity = await _context.Operators.FindAsync(code);
         if (entity == null)
             return;
-
-        if (entity.Name != name)
-        {
-            entity.Name = name;
-            _context.Operators.Update(entity);
-            await _context.SaveChangesAsync();
-        }
+        
+        entity.Name = name;
+        _context.Operators.Update(entity);
+        await _context.SaveChangesAsync();
     }
 
     public async Task Delete(int code)
